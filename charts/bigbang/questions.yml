@@ -8,4 +8,20 @@ questions:
     description: "Hostname to use for all publicly facing BigBang services"
     type: string
     label: Host Name
-    group: "Security Settings"
+    group: "General"
+
+  # istio core
+  - variable: istio.enabled
+    description: "Enable Istio"
+    label: "Enable Istio"
+    type: boolean
+    default: true
+    group: "Istio"
+  
+  # argocd addon
+  - variable: addons.argocd.enabled
+    description: "Enable ArgoCD"
+    label: "Enable ArgoCD"
+    type: boolean
+    default: false
+    group: "Addon - ArgoCD"
