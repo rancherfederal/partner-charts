@@ -2,28 +2,107 @@ categories:
   - platform one
   - donkey
   - butt
+
 questions:
   - variable: hostname
     default: "bigbang.dev"
     description: "Hostname to use for all publicly facing BigBang services"
     type: string
     label: Host Name
-    group: "General"
+    group: "General Settings"
 
+  # registryCredentials
+  - variable: registryCredentials.registry
+    default: "registry1.dso.mil"
+    description: "Hostname to build registry credentials against"
+    required: false
+    type: string
+    label: "Registry Name"
+    group: "General Settings"
+  - variable: registryCredentials.username
+    default: "registry1.dso.mil"
+    description: "Username used to authenticate to registry"
+    required: false
+    type: string
+    label: "Registry Username"
+    group: "General Settings"
+  - variable: registryCredentials.password
+    default: "registry1.dso.mil"
+    description: "Password used to authenticate to registry"
+    required: false
+    type: string
+    label: "Registry Password"
+    group: "General Settings"
+  - variable: registryCredentials.email
+    default: ""
+    description: "Email used ot authenticate to registry"
+    required: false
+    type: string
+    label: "Registry Email"
+    group: "General Settings"
+
+  # git credentials
+  - variable: git.existingSecret
+    default: ""
+    description: "Existing secret to use for git credentials, must be in the appropriate format: https://toolkit.fluxcd.io/components/source/gitrepositories/#https-authentication"
+    required: false
+    type: string
+    label: "Existing Git Secret"
+    group: "General Settings"
+  - variable: git.credentials.username
+    default: ""
+    description: "Username used to authenticate over a private HTTP(s) git repository"
+    required: false
+    type: string
+    label: "Git Repository Username"
+    group: "General Settings"
+  - variable: git.credentials.password
+    default: ""
+    description: "Password used to authenticate over a private HTTP(s) git repository"
+    required: false
+    type: string
+    label: "Git Repository Password"
+    group: "General Settings"
+  - variable: git.credentials.publicKey
+    default: ""
+    description: "Public key used for SSH authentication to a private git repository"
+    required: false
+    type: string
+    label: "Git Repository Public Key"
+    group: "General Settings"
+  - variable: git.credentials.privateKey
+    default: ""
+    description: "Private key used for SSH authentication to a private git repository"
+    required: false
+    type: string
+    label: "Git Repository Private Key"
+    group: "General Settings"
+
+  # --------------------------------------------------------------------------
   # istio core
   - variable: istio.enabled
     description: "Enable Istio"
     label: "Enable Istio"
     type: boolean
     default: true
-    group: "Istio"
-    subquestions:
-      - variable: istio.sso.enabled
-        description: "Enable sso for istio components"
-        label: "Istio SSO"
-        default: false
-        group: "Istio Settings"
+    group: "Core - Istio"
+  - variable: istio.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Istio"
+  - variable: istio.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Istio"
+  - variable: istio.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Istio"
   
+  # --------------------------------------------------------------------------
   # argocd addon
   - variable: addons.argocd.enabled
     description: "Enable ArgoCD"
