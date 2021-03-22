@@ -1,0 +1,11 @@
+categories:
+  - platform one
+  - donkey
+  - butt
+questions:
+  - variable: hostname
+    default: "bigbang.dev"
+    description: "Hostname to use for all publicly facing BigBang services"
+    type: string
+    label: Host Name
+    group: "Security Settings"

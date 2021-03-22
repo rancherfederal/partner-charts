@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: bigbang
+upstream:
+  type: git
+  git:
+    commit: 511a17591ebe766802cb60f7b1ff94780b6925bb
+    repo: https://repo1.dso.mil/platform-one/big-bang/bigbang
+    directory: /chart
+    ref: 1.3.0
