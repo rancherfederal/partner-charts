@@ -17,6 +17,12 @@ questions:
     type: boolean
     default: true
     group: "Istio"
+    subquestions:
+      - variable: istio.sso.enabled
+        description: "Enable sso for istio components"
+        label: "Istio SSO"
+        default: false
+        group: "Istio Settings"
   
   # argocd addon
   - variable: addons.argocd.enabled
