@@ -289,6 +289,7 @@ questions:
     default: ""
   - variable: addons.argocd.sso.enabled
     description: "Enable SSO for ArgoCD"
+    label: "Enable SSO for ArgoCD"
     type: boolean
     group: "Addon - ArgoCD"
     show_subquestion_if: true
@@ -473,6 +474,7 @@ questions:
     default: ""
   - variable: addons.sonarqube.sso.enabled
     description: "Enable SSO for SonarQube"
+    label: "Enable SSO for SonarQube"
     type: boolean
     group: "Addon - SonarQube"
     show_subquestion_if: true
@@ -489,6 +491,7 @@ questions:
         group: "Addon - SonarQube"
   - variable: addons.sonarqube.database.enabled
     description: "Enable external SonarQube database"
+    label: "Enable external SonarQube database"
     type: boolean
     group: "Addon - SonarQube"
     default: false
@@ -551,6 +554,7 @@ questions:
     default: ""
   - variable: addons.anchore.sso.enabled
     description: "Enable SSO for Anchore"
+    label: "Enable SSO for Anchore"
     type: boolean
     group: "Addon - Anchore"
     show_subquestion_if: true
@@ -567,6 +571,7 @@ questions:
         group: "Addon - Anchore"
   - variable: addons.anchore.database.enabled
     description: "Enable external Anchore database"
+    label: "Enable external Anchore database"
     type: boolean
     group: "Addon - Anchore"
     default: false
@@ -629,6 +634,7 @@ questions:
     default: ""
   - variable: addons.mattermost.sso.enabled
     description: "Enable SSO for Mattermost"
+    label: "Enable SSO for Mattermost"
     type: boolean
     group: "Addon - Mattermost"
     show_subquestion_if: true
@@ -645,6 +651,7 @@ questions:
         group: "Addon - Mattermost"
   - variable: addons.mattermost.database.enabled
     description: "Enable external Mattermost database"
+    label: "Enable external Mattermost database"
     type: boolean
     group: "Addon - Mattermost"
     default: false
