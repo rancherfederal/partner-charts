@@ -287,6 +287,22 @@ questions:
     type: multiline
     group: "Addon - ArgoCD"
     default: ""
+  - variable: addons.argocd.sso.enabled
+    description: "Enable SSO for ArgoCD"
+    type: boolean
+    group: "Addon - ArgoCD"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.argocd.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - ArgoCD"
+      - variable: addons.argocd.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - ArgoCD"
 
   # --------------------------------------------------------------------------
   # authservice addon
@@ -377,6 +393,54 @@ questions:
     type: multiline
     group: "Addon - Gitlab"
     default: ""
+  - variable: addons.gitlab.sso.enabled
+    description: "Enable SSO for Gitlab"
+    type: boolean
+    group: "Addon - Gitlab"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.gitlab.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Gitlab"
+  - variable: addons.gitlab.database.enabled
+    description: "Enable external Gitlab database"
+    type: boolean
+    group: "Addon - Gitlab"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.gitlab.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Gitlab"
 
   # --------------------------------------------------------------------------
   # sonarqube addon
@@ -407,6 +471,54 @@ questions:
     type: multiline
     group: "Addon - SonarQube"
     default: ""
+  - variable: addons.sonarqube.sso.enabled
+    description: "Enable SSO for SonarQube"
+    type: boolean
+    group: "Addon - SonarQube"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.sonarqube.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - SonarQube"
+  - variable: addons.sonarqube.database.enabled
+    description: "Enable external SonarQube database"
+    type: boolean
+    group: "Addon - SonarQube"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.sonarqube.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - SonarQube"
 
   # --------------------------------------------------------------------------
   # anchore addon
@@ -437,6 +549,54 @@ questions:
     type: multiline
     group: "Addon - Anchore"
     default: ""
+  - variable: addons.anchore.sso.enabled
+    description: "Enable SSO for Anchore"
+    type: boolean
+    group: "Addon - Anchore"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.anchore.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Anchore"
+  - variable: addons.anchore.database.enabled
+    description: "Enable external Anchore database"
+    type: boolean
+    group: "Addon - Anchore"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.anchore.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Anchore"
 
   # --------------------------------------------------------------------------
   # mattermost addon
@@ -467,3 +627,51 @@ questions:
     type: multiline
     group: "Addon - Mattermost"
     default: ""
+  - variable: addons.mattermost.sso.enabled
+    description: "Enable SSO for Mattermost"
+    type: boolean
+    group: "Addon - Mattermost"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.mattermost.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Mattermost"
+  - variable: addons.mattermost.database.enabled
+    description: "Enable external Mattermost database"
+    type: boolean
+    group: "Addon - Mattermost"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.mattermost.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Mattermost"
