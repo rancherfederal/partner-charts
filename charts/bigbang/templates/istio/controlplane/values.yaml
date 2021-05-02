@@ -1,0 +1,16 @@
+{{- if .Values.istio.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.istio "name" "istio" "defaults" (include "bigbang.defaults.istio" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.istio" -}}
+hostname: {{ .Values.hostname }}
+
+tracing:
+  enabled:  {{ .Values.jaeger.enabled }}
+
+imagePullSecrets:
+  - private-registry
+
+openshift: {{ .Values.openshift }}
+
+{{- end -}}

@@ -1,0 +1,10 @@
+{{- if .Values.istiooperator.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.istiooperator "name" "istio-operator" "defaults" (include "bigbang.defaults.istiooperator" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.istiooperator" -}}
+createNamespace: false
+
+imagePullSecrets:
+  - name: private-registry
+{{- end -}}

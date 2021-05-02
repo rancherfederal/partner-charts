@@ -1,0 +1,12 @@
+{{- if .Values.clusterAuditor.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.clusterAuditor "name" "cluster-auditor" "defaults" (include "bigbang.defaults.clusterauditor" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.clusterauditor" -}}
+elasticsearch:
+  imagePullSecrets:
+    - name: private-registry
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+{{- end -}}

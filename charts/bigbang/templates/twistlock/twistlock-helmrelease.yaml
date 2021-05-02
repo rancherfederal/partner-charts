@@ -37,19 +37,16 @@ spec:
   {{- end }}
 
   valuesFrom:
-  - name: values
-    kind: Secret
-    valuesKey: "twistlock.yaml"
+    - name: {{ .Release.Name }}-twistlock-values
+      kind: Secret
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-twistlock-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-twistlock-values
+      kind: Secret
+      valuesKey: "overlays"
 
-  values:
-    hostname: {{ .Values.hostname }}
-    prometheus:
-      servicemonitor:
-        enabled: {{ .Values.monitoring.enabled }}
-    imagePullSecrets:
-    - name: private-registry
-    istio:
-      enabled: {{ .Values.istio.enabled }}
   # TODO: DRY this up
   {{- if or .Values.gatekeeper.enabled .Values.istio.enabled }}
   dependsOn:
