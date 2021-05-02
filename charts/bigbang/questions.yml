@@ -108,32 +108,32 @@ questions:
   
   # --------------------------------------------------------------------------
   # tracing core
-  - variable: tracing.enabled
-    description: "Enable Tracing"
-    label: "Enable Tracing"
+  - variable: jaeger.enabled
+    description: "Enable Jaeger"
+    label: "Enable Jaeger"
     type: boolean
     default: true
-    group: "Core - Tracing"
-  - variable: tracing.git.repo
+    group: "Core - Jaeger"
+  - variable: jaeger.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Tracing"
-  - variable: tracing.git.path
+    group: "Core - Jaeger"
+  - variable: jaeger.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Tracing"
-  - variable: tracing.git.tag
+    group: "Core - Jaeger"
+  - variable: jaeger.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Tracing"
-  - variable: tracing.values
+    group: "Core - Jaeger"
+  - variable: jaeger.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Tracing"
+    group: "Core - Jaeger"
     default: ""
   
   # --------------------------------------------------------------------------
