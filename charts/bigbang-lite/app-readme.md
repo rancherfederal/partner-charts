@@ -16,20 +16,3 @@ It uses gitops with [flux v2](https://fluxcd.io/docs/) to declaratively deploy a
 * Policy Enforcement (OPA Gatekeeper)
 * Cluster Auditing
 * Runtime Defense (Twistlock)
-
-In addition to the core capabilities above, several addons providing various DevSecOps capabilities can be deployed and integrated using BigBang:
-
-* Gitlab
-* Mattermost
-* Anchore
-* SonarQube
-* ArgoCD
-* MinIO
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Tom Runyon | tom@runyon.dev |  |
-| Josh Wolf | josh@rancherfederal.com |  |
-
