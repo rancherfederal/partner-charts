@@ -5,6 +5,13 @@
 {{- define "bigbang.defaults.istiooperator" -}}
 createNamespace: false
 
+enterprise: {{ .Values.istio.enterprise }}
+imagePullPolicy: {{ .Values.imagePullPolicy }}
+
 imagePullSecrets:
-  - name: private-registry
+  - private-registry
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 {{- end -}}

@@ -3,15 +3,39 @@
 {{- end }}
 
 {{- define "bigbang.defaults.twistlock" -}}
-hostname: {{ .Values.hostname }}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+domain: {{ default .Values.domain .Values.hostname }}
 
-prometheus:
-  servicemonitor:
-    enabled: {{ .Values.monitoring.enabled }}
+openshift: {{ .Values.openshift }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
 
 imagePullSecrets:
 - name: private-registry
 
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.twistlock.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  nodeCidr: {{ .Values.networkPolicies.nodeCidr }}
+
 istio:
   enabled: {{ .Values.istio.enabled }}
+  console:
+    gateways:
+    - istio-system/{{ default "public" .Values.twistlock.ingress.gateway }}
+
+{{- if .Values.istio.enabled }}
+annotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+console:
+  image:
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
+
 {{- end -}}

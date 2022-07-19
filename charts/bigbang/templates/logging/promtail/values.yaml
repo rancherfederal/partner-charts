@@ -1,0 +1,44 @@
+{{- if .Values.promtail.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.promtail "name" "promtail" "defaults" (include "bigbang.defaults.promtail" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.promtail" -}}
+hostname: {{ .Values.hostname }}
+
+initContainer:
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
+
+image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
+openshift: {{ .Values.openshift }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+
+serviceMonitor:
+  enabled: {{ .Values.monitoring.enabled }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+imagePullSecrets:
+  - name: private-registry
+
+{{- if .Values.loki.enabled }}
+config:
+  {{- if eq .Values.loki.strategy "monolith" }}
+  lokiAddress: http://logging-loki.logging.svc.cluster.local:3100/loki/api/v1/push
+  {{- else }}
+  lokiAddress: http://logging-loki-write.logging.svc.cluster.local:3100/loki/api/v1/push
+  {{- end }}
+{{- end }}
+{{- end -}}

@@ -19,9 +19,9 @@ spec:
 
   {{- toYaml $fluxSettingsGitlabRunner | nindent 2 }}
 
-  {{- if .Values.addons.gitlab.postRenderers }}
+  {{- if .Values.addons.gitlabRunner.postRenderers }}
   postRenderers:
-  {{ toYaml .Values.addons.gitlab.postRenderers | nindent 4 }}
+  {{ toYaml .Values.addons.gitlabRunner.postRenderers | nindent 4 }}
   {{- end }}
   valuesFrom:
     - name: {{ .Release.Name }}-gitlab-runner-values
@@ -34,10 +34,14 @@ spec:
       kind: Secret
       valuesKey: "overlays"
 
-  {{- if or .Values.gatekeeper.enabled .Values.monitoring.enabled .Values.addons.gitlab.enabled }}
+  {{- if or .Values.gatekeeper.enabled .Values.kyvernopolicies.enabled .Values.monitoring.enabled .Values.addons.gitlab.enabled }}
   dependsOn:
     {{- if .Values.gatekeeper.enabled }}
     - name: gatekeeper
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.kyvernopolicies.enabled }}
+    - name: kyvernopolicies
       namespace: {{ .Release.Namespace }}
     {{- end }}
     {{- if .Values.monitoring.enabled }}

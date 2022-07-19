@@ -5,4 +5,24 @@
 {{- define "bigbang.defaults.mattermostoperator" -}}
 imagePullSecrets:
   - name: private-registry
+
+image:
+  imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end}}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+openshift: {{ .Values.openshift }}
 {{- end -}}

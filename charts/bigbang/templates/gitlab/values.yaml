@@ -1,46 +1,177 @@
 {{- if .Values.addons.gitlab.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.gitlab "name" "gitlab" "defaults" (include "bigbang.defaults.gitlab" .)) }}
 {{- end }}
-
+{{- if and (ne .Values.addons.gitlab.objectStorage.iamProfile "") (ne .Values.addons.gitlab.objectStorage.accessKey "") }}{{- fail "Must choose to use an IAM profile OR an AWS accessKey/accessSecret at .Values.addons.gitlab.objectStorage" }}{{- end }}
 {{- define "bigbang.defaults.gitlab" -}}
-hostname: {{ .Values.hostname }}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
+hostname: {{ $domainName }}
+domain: {{ $domainName }}
+
+# Define variables to help with conditionals later
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.gitlab) "enabled") .Values.istio.enabled) }}
+{{- $iamProfile := (and (ne .Values.addons.gitlab.objectStorage.iamProfile "") .Values.addons.gitlab.objectStorage.endpoint) }}
+
+openshift: {{ .Values.openshift }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  injection: {{ dig "istio" "injection" "enabled" .Values.addons.gitlab }}
+  gitlab:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.gitlab.ingress.gateway }}
+  registry:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.gitlab.ingress.gateway }}
 
-{{- if .Values.addons.gitlab.database.host }}
-postgresql:
-  install: false
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.addons.gitlab.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+
+{{- if and (or $istioInjection .Values.monitoring.enabled) (dig "redis" "install" true .Values.addons.gitlab.values) }}
+redis:
+  {{- if .Values.monitoring.enabled }}
+  metrics:
+    serviceMonitor:
+      enabled: true
+      namespace: gitlab
+  {{- end }}
+  {{- if $istioInjection }}
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  slave:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  {{- end }}
 {{- end }}
 
-{{- if .Values.addons.gitlab.objectStorage.endpoint }}
+{{- if or .Values.addons.gitlab.database.host $istioInjection }}
+postgresql:
+  {{- if .Values.addons.gitlab.database.host }}
+  install: false
+  {{- end }}
+  {{- if $istioInjection }}
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  slave:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  {{- end }}
+{{- end }}
+
+{{- if or .Values.addons.gitlab.objectStorage.endpoint $istioInjection }}
 registry:
+  {{- if .Values.addons.gitlab.objectStorage.endpoint }}
   storage:
     secret: gitlab-object-storage
     key: registry
+  {{- end }}
+  {{- if or $iamProfile $istioInjection }}
+  annotations: 
+    {{- if $iamProfile }}
+    iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+    {{- end }}
+    {{- if $istioInjection }}
+    {{ include "istioAnnotation" . }}
+    {{- end }}
+  {{- end }}
 {{- end }}
 
 gitlab:
-  {{- if .Values.addons.gitlab.objectStorage.endpoint }}
-  task-runner:
+  {{- if or .Values.addons.gitlab.objectStorage.endpoint $istioInjection }}
+  toolbox:
+    {{- if .Values.addons.gitlab.objectStorage.endpoint }}
     backups:
       objectStorage:
         config:
           secret: gitlab-object-storage
           key: backups
+    {{- end }}
+    {{- if or $iamProfile $istioInjection }}
+    annotations:
+      {{- if $iamProfile }}
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+      {{- end }}
+      {{- if $istioInjection }}
+      {{ include "istioAnnotation" . }}
+      {{- end }}
+    {{- end }}
   {{- end }}
   gitlab-exporter:
     enabled: {{ .Values.monitoring.enabled }}
+    {{- if $istioInjection }}
+    metrics:
+      annotations:
+        {{ include "istioAnnotation" . }}
+    {{- end }}
+  {{- if or $iamProfile $istioInjection }}
+  webservice:
+    annotations: 
+      {{- if $iamProfile }}
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+      {{- end }}
+      {{- if $istioInjection }}
+      {{ include "istioAnnotation" . }}
+      {{- end }}
+  sidekiq:
+    annotations: 
+      {{- if $iamProfile }}
+      iam.amazonaws.com/role: {{ .Values.addons.gitlab.objectStorage.iamProfile }}
+      {{- end }}
+      {{- if $istioInjection }}
+      {{ include "istioAnnotation" . }}
+      {{- end }}
+  {{- end }}
+{{- if $istioInjection }}
+  migrations:
+    annotations:
+      {{ include "istioAnnotation" . }}
+  gitaly:
+    annotations:
+      {{ include "istioAnnotation" . }}
+  gitlab-shell:
+    annotations:
+      {{ include "istioAnnotation" . }}
+  praefect:
+    annotations:
+      {{ include "istioAnnotation" . }}
+  gitlab-grafana:
+    annotations:
+      {{ include "istioAnnotation" . }}
+shared-secrets:
+  annotations:
+    {{ include "istioAnnotation" . }}
+minio:
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+{{- end }}
 
 global:
+  # added to help with Gitlab sub-chart configuration
+  image:
+    pullPolicy: {{ .Values.imagePullPolicy }}
+    
+  istio:
+    enabled: {{ .Values.istio.enabled }}
+    injection: {{ dig "istio" "injection" "enabled" .Values.addons.gitlab }}
+
   hosts:
-    domain: {{ .Values.hostname }}
+    domain: {{ $domainName }}
 
     gitlab:
-      name: {{ .Values.addons.gitlab.hostnames.gitlab }}
+      name: {{ .Values.addons.gitlab.hostnames.gitlab }}.{{ $domainName }}
 
     registry:
-      name: {{ .Values.addons.gitlab.hostnames.registry }}
+      name: {{ .Values.addons.gitlab.hostnames.registry }}.{{ $domainName }}
 
   {{- if .Values.addons.gitlab.objectStorage.endpoint }}
   minio:
@@ -188,5 +319,21 @@ global:
       tmpBucket: gitlab-backup-tmp
     {{- end }}
   {{- end }}
+
+  {{- if and (ne .Values.addons.gitlab.redis.password "") (or .Values.addons.gitlab.enabled .Values.addons.gitlabRunner.enabled) }}
+  redis:  
+    password:
+      secret: "gitlab-redis-secret-bb"
+  {{- end }}
+
+  {{- if .Values.addons.gitlab.smtp.password }}
+  smtp:
+    password:
+      secret: "gitlab-smtp-password"
+  {{- end }}
+
+{{- if ne .Values.addons.gitlab.objectStorage.iamProfile "" }}
+use_iam_profile: true
+{{- end }}
 
 {{- end -}}

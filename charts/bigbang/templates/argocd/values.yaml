@@ -3,29 +3,101 @@
 {{- end }}
 
 {{- define "bigbang.defaults.argocd" -}}
-hostname: {{ .Values.hostname }}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
+hostname: {{ $domainName }}
+domain: {{ $domainName }}
 
 createNamespace: false
 
 global:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
+{{- $istioInjection := (and (eq (dig "istio" "injection" "enabled" .Values.addons.argocd) "enabled") .Values.istio.enabled) }}
+{{- if $istioInjection }}
+  podAnnotations:
+    {{ include "istioAnnotation" . }}
+{{- end }}
 
 controller:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
 
 dex:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
   imagePullSecrets:
     - name: private-registry
 
-redis-ha:
-  enabled: true
+{{- if and .Values.addons.argocd.redis.host .Values.addons.argocd.redis.port }}
+redis:
+  externalEndpoint: {{ .Values.addons.argocd.redis.host }}:{{ .Values.addons.argocd.redis.port }}
+  enabled: false
+{{- end }}
+
 redis-bb:
-  usePassword: false
+  {{- if and .Values.addons.argocd.redis.host .Values.addons.argocd.redis.port }}
+  enabled: false
+  {{- else }}
+  enabled: true
+  {{- end }}
+  image: 
+    pullPolicy: {{ .Values.imagePullPolicy }}
+  auth:
+    enabled: false
+  {{- if .Values.monitoring.enabled }}
+  metrics:
+    enabled: true
+    image:
+      pullSecrets:
+        - private-registry
+    serviceMonitor:
+      enabled: true
+      namespace: argocd
+      selector:
+        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/instance: argocd-argocd
+    prometheusRule:
+      enabled: true
+      namespace: monitoring
+  {{- end }}
+{{- if $istioInjection }}  
+  master:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+  replica:
+    podAnnotations:
+      {{ include "istioAnnotation" . }}
+{{- end }}
+
+server:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
+
+repoServer:
+  image: 
+    imagePullPolicy: {{ .Values.imagePullPolicy }}
 
 istio:
   enabled: {{ .Values.istio.enabled }}
+  argocd:
+    gateways:
+    - istio-system/{{ default "public" .Values.addons.argocd.ingress.gateway }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.addons.argocd.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
 
 {{- if .Values.addons.argocd.sso.enabled }}
 sso:

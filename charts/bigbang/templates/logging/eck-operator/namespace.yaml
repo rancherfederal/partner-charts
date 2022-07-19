@@ -1,4 +1,4 @@
-{{- if or .Values.eckoperator.enabled .Values.logging.enabled .Values.clusterAuditor.enabled }}
+{{- if or .Values.eckoperator.enabled .Values.logging.enabled }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -7,19 +7,5 @@ metadata:
     app.kubernetes.io/name: eck-operator
     app.kubernetes.io/component: "core"
     {{- include "commonLabels" . | nindent 4}}
----
-{{- if ( include "imagePullSecret" . ) }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: private-registry
-  namespace: eck-operator
-  labels:
-    app.kubernetes.io/name: eck-operator
-    app.kubernetes.io/component: "core"
-    {{- include "commonLabels" . | nindent 4}}
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: {{ template "imagePullSecret" . }}
-{{- end }}
+    istio-injection: enabled
 {{- end }}

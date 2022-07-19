@@ -60,7 +60,7 @@ Build the appropriate git credentials secret for private git repositories
 {{- if .Values.git.existingSecret -}}
 secretRef:
   name: {{ .Values.git.existingSecret }}
-{{- else if coalesce .Values.git.credentials.username .Values.git.credentials.password .Values.git.credentials.privateKey .Values.git.credentials.publicKey .Values.git.credentials.knownHosts "" -}}
+{{- else if coalesce .Values.git.credentials.username .Values.git.credentials.password .Values.git.credentials.caFile .Values.git.credentials.privateKey .Values.git.credentials.publicKey .Values.git.credentials.knownHosts "" -}}
 {{- /* Input validation happens in git-credentials.yaml template */ -}}
 secretRef:
   name: {{ $.Release.Name }}-git-credentials
@@ -76,6 +76,7 @@ Build common set of file extensions to include/exclude
     /**/*.md
     /**/*.txt
     /**/*.sh
+    !/chart/tests/scripts/*.sh
 {{- end -}}
 
 {{/*
@@ -100,4 +101,60 @@ stringData:
   defaults: {{- toYaml .defaults | nindent 4 }}
   overlays: |
     {{- toYaml .package.values | nindent 4 }}
+{{- end -}}
+
+{{/* 
+bigbang.addValueIfSet can be used to nil check parameters before adding them to the values.
+  Expects a list with the following params:
+    * [0] - (string) <yaml_key_to_add>
+    * [1] - (interface{}) <value_to_check>
+  
+  No output is generated if <value> is undefined, however, explicitly set empty values 
+  (i.e. `username=""`) will be passed along. All string fields will be quoted.
+
+  Example command: 
+  - `{{ (list "name" .username) | include "bigbang.addValueIfSet" }}`
+    * When `username: Aniken`
+      -> `name: "Aniken"`
+    * When `username: ""`
+      -> `name: ""`
+    * When username is not defined
+      -> no output 
+*/}}
+{{- define "bigbang.addValueIfSet" -}}
+  {{- $key := (index . 0) }}
+  {{- $value := (index . 1) }}
+  {{- /*If the value is explicitly set (even if it's empty)*/}}
+  {{- if not (kindIs "invalid" $value) }}
+    {{- /*Handle strings*/}}
+    {{- if kindIs "string" $value }}
+      {{- printf "\n%s" $key }}: {{ $value | quote }} 
+    {{- /*Hanldle slices*/}}
+    {{- else if kindIs "slice" $value }}
+      {{- printf "\n%s" $key }}:    
+        {{- range $value }}
+          {{- if kindIs "string" . }}
+            {{- printf "\n  - %s" (. | quote) }}
+          {{- else }} 
+            {{- printf "\n  - %v" . }}
+          {{- end }}
+        {{- end }}
+    {{- /*Handle other types (no quotes)*/}}
+    {{- else }}
+      {{- printf "\n%s" $key }}: {{ $value }} 
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{/*
+Annotation for Istio version
+*/}}
+{{- define "istioAnnotation" -}}
+{{- if .Values.istio.git.semver -}}
+bigbang.dev/istioVersion: {{ .Values.istio.git.semver | trimSuffix (regexFind "-bb.*" .Values.istio.git.semver) }}
+{{- else if .Values.istio.git.tag -}}
+bigbang.dev/istioVersion: {{ .Values.istio.git.tag | trimSuffix (regexFind "-bb.*" .Values.istio.git.tag) }}
+{{- else if .Values.istio.git.branch -}}
+bigbang.dev/istioVersion: {{ .Values.istio.git.branch }}
+{{- end -}}
 {{- end -}}

@@ -1,0 +1,72 @@
+{{- if .Values.tempo.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.tempo "name" "tempo" "defaults" (include "bigbang.defaults.tempo" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.tempo" -}}
+
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+objectStorage: 
+  access_key_id: {{ .Values.tempo.objectStorage.accessKey }}
+  secret_access_key: {{ .Values.tempo.objectStorage.accessSecret }}
+
+tempo:
+  imagePullSecrets:
+  - name: private-registry
+  pullPolicy: {{ .Values.imagePullPolicy }}
+{{- with .Values.tempo.objectStorage }}
+{{- if and .endpoint .region .bucket }}
+  storage: 
+    trace:
+      backend: s3
+      s3:
+        endpoint: {{ .endpoint }}
+        bucket: {{ .bucket }}
+        region: {{ .region }}
+        insecure: {{ .insecure }}
+        forcepathstyle: true
+{{- end }}
+{{- end }}
+
+    # hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
+hostname: {{ $domainName }}
+domain: {{ $domainName }}
+
+tempoQuery:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.tempo.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+  tempoQuery:
+    # During BETA Period set TempoQuery UI to "tempo." instead of soon to be default "tracing."
+    {{- if .Values.jaeger.enabled }}
+    hosts:
+      - "tempo.{{ .Values.domain }}"
+    {{- end }}
+    gateways:
+    - istio-system/{{ default "public" .Values.tempo.ingress.gateway }}
+
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+serviceMonitor:
+  enabled: {{ .Values.monitoring.enabled }}
+
+{{- end -}}

@@ -1,4 +1,4 @@
-{{- if or .Values.eckoperator.enabled .Values.logging.enabled .Values.clusterAuditor.enabled }}
+{{- if or .Values.eckoperator.enabled .Values.logging.enabled }}
 {{- include "values-secret" (dict "root" $ "package" .Values.eckoperator "name" "eck-operator" "defaults" (include "bigbang.defaults.eck-operator" .)) }}
 {{- end }}
 
@@ -8,10 +8,27 @@ license:
   keyJSON: |
     {{ .Values.logging.license.keyJSON | nindent 4 }}
 
+image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+  
+{{- if .Values.istio.enabled }}
 podAnnotations:
-  sidecar.istio.io/inject: "true"
   traffic.sidecar.istio.io/includeInboundPorts: "*"
   traffic.sidecar.istio.io/excludeInboundPorts: "9443"
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+openshift: {{ .Values.openshift }}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
 
 imagePullSecrets:
   - name: private-registry

@@ -1,5 +1,6 @@
-{{- if and .Values.istio.enabled .Values.monitoring.sso.enabled }}
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+{{- $monitoringInjection := dig "istio" "injection" "enabled" .Values.monitoring }}
+{{- if and .Values.istio.enabled .Values.monitoring.enabled .Values.monitoring.sso.enabled (eq $monitoringInjection "disabled") }}
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: haproxy

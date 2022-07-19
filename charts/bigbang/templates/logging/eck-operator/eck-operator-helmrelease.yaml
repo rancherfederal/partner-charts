@@ -1,5 +1,5 @@
 {{- $fluxSettingsEckOperator := merge .Values.eckoperator.flux .Values.flux -}}
-{{- if or .Values.eckoperator.enabled .Values.logging.enabled .Values.clusterAuditor.enabled }}
+{{- if or .Values.eckoperator.enabled .Values.logging.enabled }}
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -37,9 +37,19 @@ spec:
       kind: Secret
       valuesKey: "overlays"
 
-  {{- if .Values.gatekeeper.enabled }}
+  {{- if or .Values.gatekeeper.enabled .Values.istio.enabled .Values.kyvernopolicies.enabled }}
   dependsOn:
+    {{- if .Values.gatekeeper.enabled }}
     - name: gatekeeper
       namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.istio.enabled }}
+    - name: istio
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.kyvernopolicies.enabled }}
+    - name: kyvernopolicies
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
   {{- end }}
 {{- end }}

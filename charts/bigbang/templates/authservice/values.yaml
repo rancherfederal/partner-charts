@@ -1,10 +1,49 @@
-{{- if and .Values.istio.enabled ( or .Values.addons.authservice.enabled .Values.monitoring.sso.enabled .Values.jaeger.sso.enabled ) }}
+{{- if and .Values.istio.enabled (or .Values.addons.authservice.enabled (and .Values.monitoring.enabled .Values.monitoring.sso.enabled) (and .Values.jaeger.enabled .Values.jaeger.sso.enabled)) }}
 {{- include "values-secret" (dict "root" $ "package" .Values.addons.authservice "name" "authservice" "defaults" (include "bigbang.defaults.authservice" .)) }}
 {{- end }}
 
 {{- define "bigbang.defaults.authservice" -}}
+# hostname is deprecated and replaced with domain. But if hostname exists then use it.
+{{- $domainName := default .Values.domain .Values.hostname }}
+
+image: 
+  pullPolicy: {{ .Values.imagePullPolicy }}
+  
 imagePullSecrets:
   - name: private-registry
+
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+
+openshift: {{ .Values.openshift }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  ingressLabels:
+    {{- $gateway := default "public" .Values.addons.haproxy.ingress.gateway }}
+    {{- $default := dict "app" (dig "gateways" $gateway "ingressGateway" nil .Values.istio) "istio" nil }}
+    {{- toYaml (dig "values" "gateways" $gateway "selector" $default .Values.istio) | nindent 4 }}
+
+{{- if and (dig "redis" "enabled" false .Values.addons.authservice.values) .Values.monitoring.enabled }}
+redis-bb:
+  metrics:
+    enabled: true 
+    image:
+      pullSecrets:
+        - private-registry
+    serviceMonitor:
+      enabled: true
+      namespace: authservice
+      selector: 
+        app.kubernetes.io/name: redis-bb
+        app.kubernetes.io/instance: authservice-authservice
+    prometheusRule:
+      enabled: true 
+      namespace: monitoring
+{{- end }}
 
 global:
   oidc:
@@ -24,7 +63,15 @@ global:
   {{- end }}
 
   {{- if .Values.sso.certificate_authority }}
-  certificate_authority: {{ .Values.sso.certificate_authority  }}
+  certificate_authority: {{ .Values.sso.certificate_authority | quote }}
+  {{- end }}
+
+  {{- $authserviceValues := .Values.addons.authservice.values | default dict }}
+  {{- $redisValues := $authserviceValues.redis | default dict }}
+  {{- if hasKey $redisValues "enabled" }}
+  {{- if $redisValues.enabled }}
+  redis_server_uri: "tcp://authservice-authservice-redis-bb-master:6379"
+  {{- end }}
   {{- end }}
 
 chains:
@@ -32,31 +79,53 @@ chains:
   {{ .Values.addons.authservice.chains | toYaml | nindent 2 }}
   {{- end }}
 
-  {{- if .Values.jaeger.sso.enabled }}
+  {{- if and .Values.jaeger.enabled .Values.jaeger.sso.enabled }}
   jaeger:
     match:
       header: ":authority"
+    {{- $jaegerValues := .Values.jaeger.values | default dict }}
+    {{- $jaegerIstioValues := $jaegerValues.istio | default dict }}
+    {{- $jaegerHostValues := $jaegerIstioValues.jaeger | default dict}}
+    {{- if hasKey $jaegerHostValues "hosts" }}
+      prefix: {{ range .Values.jaeger.values.istio.jaeger.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.jaeger.values.istio.jaeger.hosts }}{{ tpl . $}}{{ end }}/login
+    {{- else }}
       prefix: "tracing"
+    callback_uri: https://tracing.{{ $domainName }}/login
+    {{- end }}
     client_id: "{{ .Values.jaeger.sso.client_id }}"
     client_secret: "{{ .Values.jaeger.sso.client_secret }}"
-    callback_uri: https://tracing.{{ .Values.hostname }}/login
   {{- end }}
 
-  {{- if .Values.monitoring.sso.enabled }}
+  {{- if and .Values.monitoring.enabled .Values.monitoring.sso.enabled }}
   prometheus:
     match:
       header: ":authority"
+    {{- $monitoringValues := .Values.monitoring.values | default dict }}
+    {{- $monitoringIstioValues := $monitoringValues.istio | default dict }}
+    {{- $prometheusHostValues := $monitoringIstioValues.prometheus | default dict}}
+    {{- if hasKey $prometheusHostValues "hosts" }}
+      prefix: {{ range .Values.monitoring.values.istio.prometheus.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.monitoring.values.istio.prometheus.hosts }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    {{- else }}
       prefix: "prometheus"
+    callback_uri: https://prometheus.{{ $domainName }}/login/generic_oauth
+    {{- end }}
     client_id: {{ .Values.monitoring.sso.prometheus.client_id }}
     client_secret: "{{ .Values.monitoring.sso.prometheus.client_secret }}"
-    callback_uri: https://prometheus.{{ .Values.hostname }}/login/generic_oauth
 
   alertmanager:
     match:
       header: ":authority"
+    {{- $alertmanagerHostValues := $monitoringIstioValues.alertmanager | default dict}}
+    {{- if hasKey $alertmanagerHostValues "hosts" }}
+      prefix: {{ range .Values.monitoring.values.istio.alertmanager.hosts }}{{ tpl . $}}{{ end }}
+    callback_uri: https://{{ range .Values.monitoring.values.istio.alertmanager.hosts }}{{ tpl . $}}{{ end }}/login/generic_oauth
+    {{- else }}
       prefix: "alertmanager"
+    callback_uri: https://alertmanager.{{ $domainName }}/login/generic_oauth
+    {{- end }}
     client_id: {{ .Values.monitoring.sso.alertmanager.client_id }}
     client_secret: "{{ .Values.monitoring.sso.alertmanager.client_secret }}"
-    callback_uri: https://alertmanager.{{ .Values.hostname }}/login/generic_oauth
   {{- end }}
 {{- end -}}
