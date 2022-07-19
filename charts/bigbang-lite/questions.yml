@@ -1,0 +1,742 @@
+categories:
+  - platform one
+
+questions:
+  - variable: hostname
+    default: "bigbang.dev"
+    description: "Hostname to use for all publicly facing BigBang services"
+    type: string
+    label: Host Name
+    group: "General Settings"
+
+  # registryCredentials
+  - variable: registryCredentials.registry
+    default: "registry1.dso.mil"
+    description: "Hostname to build registry credentials against"
+    required: false
+    type: string
+    label: "Registry Name"
+    group: "General Settings"
+  - variable: registryCredentials.username
+    default: ""
+    description: "Username used to authenticate to registry"
+    required: false
+    type: string
+    label: "Registry Username"
+    group: "General Settings"
+  - variable: registryCredentials.password
+    default: ""
+    description: "Password used to authenticate to registry"
+    required: false
+    type: password
+    label: "Registry Password"
+    group: "General Settings"
+  - variable: registryCredentials.email
+    default: ""
+    description: "Email to ot authenticate to registry"
+    required: false
+    type: string
+    label: "Registry Email"
+    group: "General Settings"
+
+  # git credentials
+  - variable: git.existingSecret
+    default: ""
+    description: "Existing secret to use for git credentials, must be in the appropriate format: https://toolkit.fluxcd.io/components/source/gitrepositories/#https-authentication"
+    required: false
+    type: string
+    label: "Existing Git Secret"
+    group: "General Settings"
+  - variable: git.credentials.username
+    default: ""
+    description: "Username used to authenticate over a private HTTP(s) git repository"
+    required: false
+    type: string
+    label: "Git Repository Username"
+    group: "General Settings"
+  - variable: git.credentials.password
+    default: ""
+    description: "Password used to authenticate over a private HTTP(s) git repository"
+    required: false
+    type: string
+    label: "Git Repository Password"
+    group: "General Settings"
+  - variable: git.credentials.publicKey
+    default: ""
+    description: "Public key used for SSH authentication to a private git repository"
+    required: false
+    type: string
+    label: "Git Repository Public Key"
+    group: "General Settings"
+  - variable: git.credentials.privateKey
+    default: ""
+    description: "Private key used for SSH authentication to a private git repository"
+    required: false
+    type: string
+    label: "Git Repository Private Key"
+    group: "General Settings"
+
+  # --------------------------------------------------------------------------
+  # istio core
+  - variable: istio.enabled
+    description: "Enable Istio"
+    label: "Enable Istio"
+    type: boolean
+    default: true
+    group: "Core - Istio"
+  - variable: istio.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Istio"
+  - variable: istio.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Istio"
+  - variable: istio.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Istio"
+  - variable: istio.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Istio"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # tracing core
+  - variable: jaeger.enabled
+    description: "Enable Jaeger"
+    label: "Enable Jaeger"
+    type: boolean
+    default: true
+    group: "Core - Jaeger"
+  - variable: jaeger.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Jaeger"
+  - variable: jaeger.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Jaeger"
+  - variable: jaeger.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Jaeger"
+  - variable: jaeger.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Jaeger"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # kiali core
+  - variable: kiali.enabled
+    description: "Enable Istio"
+    label: "Enable Kiali"
+    type: boolean
+    default: true
+    group: "Core - Kiali"
+  - variable: kiali.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Kiali"
+  - variable: kiali.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Kiali"
+  - variable: kiali.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Kiali"
+  - variable: kiali.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Kiali"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # gatekeeper core
+  - variable: gatekeeper.enabled
+    description: "Enable Gatekeeper"
+    label: "Enable Gatekeeper"
+    type: boolean
+    default: true
+    group: "Core - OPA Gatekeeper"
+  - variable: gatekeeper.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - OPA Gatekeeper"
+  - variable: gatekeeper.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - OPA Gatekeeper"
+  - variable: gatekeeper.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - OPA Gatekeeper"
+  - variable: gatekeeper.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - OPA Gatekeeper"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # logging core
+  - variable: logging.enabled
+    description: "Enable Logging"
+    label: "Enable Logging"
+    type: boolean
+    default: true
+    group: "Core - Logging"
+  - variable: logging.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Logging"
+  - variable: logging.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Logging"
+  - variable: logging.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Logging"
+  - variable: logging.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Logging"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # clusterAuditor core
+  - variable: clusterAuditor.enabled
+    description: "Enable Cluster Auditor"
+    label: "Enable Cluster Auditor"
+    type: boolean
+    default: true
+    group: "Core - Cluster Auditor"
+  - variable: clusterAuditor.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Cluster Auditor"
+  - variable: clusterAuditor.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Cluster Auditor"
+  - variable: clusterAuditor.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Cluster Auditor"
+  - variable: clusterAuditor.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Cluster Auditor"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # monitoring core
+  - variable: monitoring.enabled
+    description: "Enable Monitoring"
+    label: "Enable Monitoring"
+    type: boolean
+    default: true
+    group: "Core - Monitoring"
+  - variable: monitoring.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Monitoring"
+  - variable: monitoring.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Monitoring"
+  - variable: monitoring.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Monitoring"
+  - variable: monitoring.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Monitoring"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # twistlock core
+  - variable: twistlock.enabled
+    description: "Enable Twistlock"
+    label: "Enable Twistlock"
+    type: boolean
+    default: true
+    group: "Core - Twistlock"
+  - variable: twistlock.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Twistlock"
+  - variable: twistlock.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Twistlock"
+  - variable: twistlock.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Twistlock"
+  - variable: twistlock.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Twistlock"
+    default: ""
+  
+  # --------------------------------------------------------------------------
+  # argocd addon
+  - variable: addons.argocd.enabled
+    description: "Enable ArgoCD"
+    label: "Enable ArgoCD"
+    type: boolean
+    default: true
+    group: "Addon - ArgoCD"
+  - variable: addons.argocd.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - ArgoCD"
+  - variable: addons.argocd.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - ArgoCD"
+  - variable: addons.argocd.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - ArgoCD"
+  - variable: addons.argocd.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - ArgoCD"
+    default: ""
+  - variable: addons.argocd.sso.enabled
+    description: "Enable SSO for ArgoCD"
+    label: "Enable SSO for ArgoCD"
+    type: boolean
+    group: "Addon - ArgoCD"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.argocd.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - ArgoCD"
+      - variable: addons.argocd.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - ArgoCD"
+
+  # --------------------------------------------------------------------------
+  # authservice addon
+  - variable: addons.authservice.enabled
+    description: "Enable Authservice"
+    label: "Enable Authservice"
+    type: boolean
+    default: true
+    group: "Addon - Authservice"
+  - variable: addons.authservice.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - Authservice"
+  - variable: addons.authservice.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - Authservice"
+  - variable: addons.authservice.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - Authservice"
+  - variable: addons.authservice.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - Authservice"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # minio addon
+  - variable: addons.minio.enabled
+    description: "Enable Minio"
+    label: "Enable Minio"
+    type: boolean
+    default: true
+    group: "Addon - Minio"
+  - variable: addons.minio.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - Minio"
+  - variable: addons.minio.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - Minio"
+  - variable: addons.minio.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - Minio"
+  - variable: addons.minio.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - Minio"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # gitlab addon
+  - variable: addons.gitlab.enabled
+    description: "Enable Gitlab"
+    label: "Enable Gitlab"
+    type: boolean
+    default: true
+    group: "Addon - Gitlab"
+  - variable: addons.gitlab.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - Gitlab"
+  - variable: addons.gitlab.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - Gitlab"
+  - variable: addons.gitlab.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - Gitlab"
+  - variable: addons.gitlab.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - Gitlab"
+    default: ""
+  - variable: addons.gitlab.sso.enabled
+    description: "Enable SSO for Gitlab"
+    type: boolean
+    group: "Addon - Gitlab"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.gitlab.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Gitlab"
+  - variable: addons.gitlab.database.enabled
+    description: "Enable external Gitlab database"
+    type: boolean
+    group: "Addon - Gitlab"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.gitlab.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Gitlab"
+      - variable: addons.gitlab.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Gitlab"
+
+  # --------------------------------------------------------------------------
+  # sonarqube addon
+  - variable: addons.sonarqube.enabled
+    description: "Enable SonarQube"
+    label: "Enable SonarQube"
+    type: boolean
+    default: true
+    group: "Addon - SonarQube"
+  - variable: addons.sonarqube.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - SonarQube"
+  - variable: addons.sonarqube.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - SonarQube"
+  - variable: addons.sonarqube.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - SonarQube"
+  - variable: addons.sonarqube.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - SonarQube"
+    default: ""
+  - variable: addons.sonarqube.sso.enabled
+    description: "Enable SSO for SonarQube"
+    label: "Enable SSO for SonarQube"
+    type: boolean
+    group: "Addon - SonarQube"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.sonarqube.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - SonarQube"
+  - variable: addons.sonarqube.database.enabled
+    description: "Enable external SonarQube database"
+    label: "Enable external SonarQube database"
+    type: boolean
+    group: "Addon - SonarQube"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.sonarqube.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - SonarQube"
+      - variable: addons.sonarqube.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - SonarQube"
+
+  # --------------------------------------------------------------------------
+  # anchore addon
+  - variable: addons.anchore.enabled
+    description: "Enable Anchore"
+    label: "Enable Anchore"
+    type: boolean
+    default: true
+    group: "Addon - Anchore"
+  - variable: addons.anchore.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - Anchore"
+  - variable: addons.anchore.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - Anchore"
+  - variable: addons.anchore.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - Anchore"
+  - variable: addons.anchore.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - Anchore"
+    default: ""
+  - variable: addons.anchore.sso.enabled
+    description: "Enable SSO for Anchore"
+    label: "Enable SSO for Anchore"
+    type: boolean
+    group: "Addon - Anchore"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.anchore.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Anchore"
+  - variable: addons.anchore.database.enabled
+    description: "Enable external Anchore database"
+    label: "Enable external Anchore database"
+    type: boolean
+    group: "Addon - Anchore"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.anchore.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Anchore"
+      - variable: addons.anchore.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Anchore"
+
+  # --------------------------------------------------------------------------
+  # mattermost addon
+  - variable: addons.mattermost.enabled
+    description: "Enable Mattermost"
+    label: "Enable Mattermost"
+    type: boolean
+    default: true
+    group: "Addon - Mattermost"
+  - variable: addons.mattermost.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Addon - Mattermost"
+  - variable: addons.mattermost.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Addon - Mattermost"
+  - variable: addons.mattermost.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Addon - Mattermost"
+  - variable: addons.mattermost.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Addon - Mattermost"
+    default: ""
+  - variable: addons.mattermost.sso.enabled
+    description: "Enable SSO for Mattermost"
+    label: "Enable SSO for Mattermost"
+    type: boolean
+    group: "Addon - Mattermost"
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.mattermost.sso.client_id
+        description: "OIDC Client ID"
+        label: "OIDC Client ID"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.sso.client_secret
+        description: "OIDC Client Secret"
+        label: "OIDC Client Secret"
+        type: password
+        group: "Addon - Mattermost"
+  - variable: addons.mattermost.database.enabled
+    description: "Enable external Mattermost database"
+    label: "Enable external Mattermost database"
+    type: boolean
+    group: "Addon - Mattermost"
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: addons.mattermost.database.host
+        description: "External database host"
+        label: "External database host"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.port
+        description: "External database port"
+        label: "External database port"
+        type: int
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.database
+        description: "External database name"
+        label: "External database name"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.username
+        description: "External database username"
+        label: "External database username"
+        type: string
+        group: "Addon - Mattermost"
+      - variable: addons.mattermost.database.password
+        description: "External database password"
+        label: "External database password"
+        type: password
+        group: "Addon - Mattermost"
