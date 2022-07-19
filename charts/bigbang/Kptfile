@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: 3279bb1f19eb3898cfdc36ae3435881eaa2a30ec
+    commit: c11ea75ea239c6d9750a3a1cec148be3d561f179
     repo: https://repo1.dso.mil/platform-one/big-bang/bigbang
     directory: /chart
-    ref: 1.7.0
+    ref: 1.38.0
