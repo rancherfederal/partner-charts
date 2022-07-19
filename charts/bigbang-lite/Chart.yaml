@@ -1,5 +1,5 @@
 apiVersion: v2
-name: bigbang
+name: bigbang-lite
 version: 1.38.0
 description: Big Bang is a declarative, continuous delivery tool for core DoD hardened and approved packages into a Kubernetes cluster.
 
