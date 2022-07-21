@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: rke2-cluster-template
+upstream:
+  type: git
+  git:
+    commit: 9c1176de9691dac08d42a20f957b1f6244d22c93
+    repo: https://github.com/rancher/cluster-template-examples
+    directory: /charts
+    ref: main
