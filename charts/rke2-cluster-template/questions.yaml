@@ -1,0 +1,14 @@
+questions:
+- variable: cluster.name
+  default: mycluster
+  description: "Specify the name of the cluster"
+  label: "Cluster Name"
+  required: true
+  type: string
+  group: "General"
+- variable: cloudCredentialSecretName
+  default:
+  description: "CloudCredentialName for provisioning cluster"
+  label: "CloudCredential Name"
+  type: cloudcredential
+  group: "General"
