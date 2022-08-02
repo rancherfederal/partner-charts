@@ -19,21 +19,21 @@ questions:
     group: "General Settings"
   - variable: registryCredentials.username
     default: ""
-    description: "Username used to authenticate to registry"
+    description: "Username used to authenticate to container registry"
     required: false
     type: string
     label: "Registry Username"
     group: "General Settings"
   - variable: registryCredentials.password
     default: ""
-    description: "Password used to authenticate to registry"
+    description: "Password used to authenticate to container registry"
     required: false
     type: password
     label: "Registry Password"
     group: "General Settings"
   - variable: registryCredentials.email
     default: ""
-    description: "Email to ot authenticate to registry"
+    description: "Email to authenticate to container registry"
     required: false
     type: string
     label: "Registry Email"
@@ -42,7 +42,7 @@ questions:
   # git credentials
   - variable: git.existingSecret
     default: ""
-    description: "Existing secret to use for git credentials, must be in the appropriate format: https://toolkit.fluxcd.io/components/source/gitrepositories/#https-authentication"
+    description: "Existing Secret to use for git credentials, must be in the appropriate format: https://toolkit.fluxcd.io/components/source/gitrepositories/#https-authentication"
     required: false
     type: string
     label: "Existing Git Secret"
@@ -58,7 +58,7 @@ questions:
     default: ""
     description: "Password used to authenticate over a private HTTP(s) git repository"
     required: false
-    type: string
+    type: password
     label: "Git Repository Password"
     group: "General Settings"
   - variable: git.credentials.publicKey
@@ -72,7 +72,7 @@ questions:
     default: ""
     description: "Private key used for SSH authentication to a private git repository"
     required: false
-    type: string
+    type: password
     label: "Git Repository Private Key"
     group: "General Settings"
 
@@ -83,27 +83,57 @@ questions:
     label: "Enable Istio"
     type: boolean
     default: true
-    group: "Core - Istio"
+    group: "Core - Service Mesh - Istio"
   - variable: istio.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Istio"
+    group: "Core - Service Mesh - Istio"
   - variable: istio.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Istio"
+    group: "Core - Service Mesh - Istio"
   - variable: istio.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Istio"
+    group: "Core - Service Mesh - Istio"
   - variable: istio.values
+    description: "Values to passthrough to chart, specified in YAML format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Service Mesh - Istio"
+    default: ""
+ 
+  # --------------------------------------------------------------------------
+  # kiali core
+  - variable: kiali.enabled
+    description: "Enable Istio"
+    label: "Enable Kiali"
+    type: boolean
+    default: true
+    group: "Core - Service Mesh - Kiali"
+  - variable: kiali.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Service Mesh - Kiali"
+  - variable: kiali.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Service Mesh - Kiali"
+  - variable: kiali.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Service Mesh - Kiali"
+  - variable: kiali.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Istio"
+    group: "Core - Service Mesh - Kiali"
     default: ""
   
   # --------------------------------------------------------------------------
@@ -113,57 +143,27 @@ questions:
     label: "Enable Jaeger"
     type: boolean
     default: true
-    group: "Core - Jaeger"
+    group: "Core - Tracing - Jaeger"
   - variable: jaeger.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Jaeger"
+    group: "Core - Tracing - Jaeger"
   - variable: jaeger.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Jaeger"
+    group: "Core - Tracing - Jaeger"
   - variable: jaeger.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Jaeger"
+    group: "Core - Tracing - Jaeger"
   - variable: jaeger.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Jaeger"
-    default: ""
-  
-  # --------------------------------------------------------------------------
-  # kiali core
-  - variable: kiali.enabled
-    description: "Enable Istio"
-    label: "Enable Kiali"
-    type: boolean
-    default: true
-    group: "Core - Kiali"
-  - variable: kiali.git.repo
-    description: "URL to clone repository from, must include protocol"
-    label: "Repo URL"
-    type: string
-    group: "Core - Kiali"
-  - variable: kiali.git.path
-    description: "Relative path in repository where chart is located"
-    label: "Chart path in repo"
-    type: string
-    group: "Core - Kiali"
-  - variable: kiali.git.tag
-    description: "Repository revision (tag) to clone"
-    label: "Repo Tag"
-    type: string
-    group: "Core - Kiali"
-  - variable: kiali.values
-    description: "Values to passthrough to chart, specified in yaml format"
-    label: "Additional Chart Values"
-    type: multiline
-    group: "Core - Kiali"
+    group: "Core - Tracing - Jaeger"
     default: ""
   
   # --------------------------------------------------------------------------
@@ -172,59 +172,181 @@ questions:
     description: "Enable Gatekeeper"
     label: "Enable Gatekeeper"
     type: boolean
-    default: true
-    group: "Core - OPA Gatekeeper"
+    default: false
+    group: "Core - Policy Enforcement - OPA Gatekeeper"
   - variable: gatekeeper.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - OPA Gatekeeper"
+    group: "Core - Policy Enforcement - OPA Gatekeeper"
   - variable: gatekeeper.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - OPA Gatekeeper"
+    group: "Core - Policy Enforcement - OPA Gatekeeper"
   - variable: gatekeeper.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - OPA Gatekeeper"
+    group: "Core - Policy Enforcement - OPA Gatekeeper"
   - variable: gatekeeper.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - OPA Gatekeeper"
+    group: "Core - Policy Enforcement - OPA Gatekeeper"
     default: ""
   
   # --------------------------------------------------------------------------
-  # logging core
-  - variable: logging.enabled
-    description: "Enable Logging"
-    label: "Enable Logging"
+  # kyverno core
+  - variable: kyverno.enabled
+    description: "Enable Kyverno"
+    label: "Enable Kyverno"
     type: boolean
     default: true
-    group: "Core - Logging"
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyverno.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyverno.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyverno.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyverno.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Policy Enforcement - Kyverno"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # kyvernopolicies core
+  - variable: kyvernopolicies.enabled
+    description: "Enable sane default Kyverno policies"
+    label: "Enable Kyverno policies"
+    type: boolean
+    default: true
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyvernopolicies.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyvernopolicies.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyvernopolicies.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Policy Enforcement - Kyverno"
+  - variable: kyvernopolicies.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Policy Enforcement - Kyverno"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # logging core (ECK)
+  - variable: logging.enabled
+    description: "Enable ECK"
+    label: "Enable ECK"
+    type: boolean
+    default: false
+    group: "Core - Logging - ECK"
   - variable: logging.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Logging"
+    group: "Core - Logging - ECK"
   - variable: logging.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Logging"
+    group: "Core - Logging - ECK"
   - variable: logging.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Logging"
+    group: "Core - Logging - ECK"
   - variable: logging.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Logging"
+    group: "Core - Logging - ECK"
     default: ""
+
+  # --------------------------------------------------------------------------
+  # eckoperator core (ECK)
+  - variable: eckoperator.enabled
+    description: "Enable ECK Operator (Required if deploying ECK package)"
+    label: "Enable ECK"
+    type: boolean
+    default: false
+    group: "Core - Logging - ECK"
+  - variable: eckoperator.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: eckoperator.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: eckoperator.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: eckoperator.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Logging - ECK"
+    default: ""
+
+  # --------------------------------------------------------------------------
+  # promtail core
+  - variable: promtail.enabled
+    description: "Enable Promtail"
+    label: "Enable Promtail"
+    type: boolean
+    default: true
+    group: "Core - Logging - ECK"
+  - variable: logging.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: logging.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: logging.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Logging - ECK"
+  - variable: logging.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Logging - ECK"
+    default: ""
+
+
 
   # --------------------------------------------------------------------------
   # clusterAuditor core
@@ -233,27 +355,27 @@ questions:
     label: "Enable Cluster Auditor"
     type: boolean
     default: true
-    group: "Core - Cluster Auditor"
+    group: "Core - Audit Logs - Cluster Auditor"
   - variable: clusterAuditor.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Cluster Auditor"
+    group: "Core - Audit Logs - Cluster Auditor"
   - variable: clusterAuditor.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Cluster Auditor"
+    group: "Core - Audit Logs - Cluster Auditor"
   - variable: clusterAuditor.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Cluster Auditor"
+    group: "Core - Audit Logs - Cluster Auditor"
   - variable: clusterAuditor.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Cluster Auditor"
+    group: "Core - Audit Logs - Cluster Auditor"
     default: ""
   
   # --------------------------------------------------------------------------
@@ -263,27 +385,27 @@ questions:
     label: "Enable Monitoring"
     type: boolean
     default: true
-    group: "Core - Monitoring"
+    group: "Core - Monitoring - Prometheus & Grafana"
   - variable: monitoring.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Monitoring"
+    group: "Core - Monitoring - Prometheus & Grafana"
   - variable: monitoring.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Monitoring"
+    group: "Core - Monitoring - Prometheus & Grafana"
   - variable: monitoring.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Monitoring"
+    group: "Core - Monitoring - Prometheus & Grafana"
   - variable: monitoring.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Monitoring"
+    group: "Core - Monitoring - Prometheus & Grafana"
     default: ""
 
   # --------------------------------------------------------------------------
@@ -293,27 +415,27 @@ questions:
     label: "Enable Twistlock"
     type: boolean
     default: true
-    group: "Core - Twistlock"
+    group: "Core - Runtime Security - Twistlock"
   - variable: twistlock.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Twistlock"
+    group: "Core - Runtime Security - Twistlock"
   - variable: twistlock.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Twistlock"
+    group: "Core - Runtime Security - Twistlock"
   - variable: twistlock.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Twistlock"
+    group: "Core - Runtime Security - Twistlock"
   - variable: twistlock.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Twistlock"
+    group: "Core - Runtime Security - Twistlock"
     default: ""
   
   # --------------------------------------------------------------------------
