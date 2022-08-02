@@ -289,8 +289,8 @@ questions:
   # --------------------------------------------------------------------------
   # eckoperator core (ECK)
   - variable: eckoperator.enabled
-    description: "Enable ECK Operator (Required if deploying ECK package)"
-    label: "Enable ECK"
+    description: "Enable ECK Operator (required if deploying ECK package)"
+    label: "Enable ECK Operator"
     type: boolean
     default: false
     group: "Core - Logging - ECK"
@@ -323,30 +323,58 @@ questions:
     label: "Enable Promtail"
     type: boolean
     default: true
-    group: "Core - Logging - ECK"
-  - variable: logging.git.repo
+    group: "Core - Logging - Promtail & Loki"
+  - variable: promtail.git.repo
     description: "URL to clone repository from, must include protocol"
     label: "Repo URL"
     type: string
-    group: "Core - Logging - ECK"
-  - variable: logging.git.path
+    group: "Core - Logging - Promtail & Loki"
+  - variable: promtail.git.path
     description: "Relative path in repository where chart is located"
     label: "Chart path in repo"
     type: string
-    group: "Core - Logging - ECK"
-  - variable: logging.git.tag
+    group: "Core - Logging - Promtail & Loki"
+  - variable: promtail.git.tag
     description: "Repository revision (tag) to clone"
     label: "Repo Tag"
     type: string
-    group: "Core - Logging - ECK"
-  - variable: logging.values
+    group: "Core - Logging - Promtail & Loki"
+  - variable: promtail.values
     description: "Values to passthrough to chart, specified in yaml format"
     label: "Additional Chart Values"
     type: multiline
-    group: "Core - Logging - ECK"
+    group: "Core - Logging - Promtail & Loki"
     default: ""
 
-
+  # --------------------------------------------------------------------------
+  # loki core
+  - variable: loki.enabled
+    description: "Enable Loki"
+    label: "Enable Loki"
+    type: boolean
+    default: true
+    group: "Core - Logging - Promtail & Loki"
+  - variable: loki.git.repo
+    description: "URL to clone repository from, must include protocol"
+    label: "Repo URL"
+    type: string
+    group: "Core - Logging - Promtail & Loki"
+  - variable: loki.git.path
+    description: "Relative path in repository where chart is located"
+    label: "Chart path in repo"
+    type: string
+    group: "Core - Logging - Promtail & Loki"
+  - variable: loki.git.tag
+    description: "Repository revision (tag) to clone"
+    label: "Repo Tag"
+    type: string
+    group: "Core - Logging - Promtail & Loki"
+  - variable: loki.values
+    description: "Values to passthrough to chart, specified in yaml format"
+    label: "Additional Chart Values"
+    type: multiline
+    group: "Core - Logging - Promtail & Loki"
+    default: ""
 
   # --------------------------------------------------------------------------
   # clusterAuditor core
