@@ -403,9 +403,9 @@ kyvernopolicies:
 
   # -- Values to passthrough to the kyverno policies chart: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/kyverno-policies.git
   values: {
-    policies:
-      restrict-image-registries:
-        enabled: false
+    "policies":
+      "restrict-image-registries":
+        "enabled": false
   }
 
   # -- Post Renderers.  See docs/postrenders.md
