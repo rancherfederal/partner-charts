@@ -2,11 +2,11 @@ categories:
   - platform one
 
 questions:
-  - variable: hostname
+  - variable: domain
     default: "bigbang.dev"
-    description: "Hostname to use for all publicly facing BigBang services"
+    description: "Domain to use for all publicly facing BigBang services"
     type: string
-    label: Host Name
+    label: Domain
     group: "General Settings"
 
   # registryCredentials
